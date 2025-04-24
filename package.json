@@ -8,6 +8,7 @@
     "serverless-http": "^3.2.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node local.js"
   }
 }
