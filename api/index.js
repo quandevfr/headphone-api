@@ -1,39 +1,8 @@
 const express = require("express");
-const userRoutes = require("../routes/userRoutes");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const morgan = require("morgan");
-var bodyParser = require("body-parser");
-
 const app = express();
-const port = 5000;
-dotenv.config();
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-    process.exit(1);
-  });
+app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
-app.use(morgan("common"));
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/favicon.ico", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "favicon.png"));
-});
-
-app.use("/api", userRoutes);
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}/api/users`);
-});
+app.listen(3000, () => console.log("Server ready on port 3000."));
 
 module.exports = app;
