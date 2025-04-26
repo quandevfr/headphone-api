@@ -29,3 +29,4 @@ logs
 # kết quả build (nếu có)
 dist/
 build/
+.vercel

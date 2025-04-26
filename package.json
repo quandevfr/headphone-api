@@ -11,10 +11,11 @@
     "mongoose": "^8.13.3",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.10",
-    "serverless-http": "^3.2.0"
+    "serverless-http": "^3.2.0",
+    "vercel": "^41.6.2"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
   }
 }

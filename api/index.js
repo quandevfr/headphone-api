@@ -1,5 +1,5 @@
 const express = require("express");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("../routes/userRoutes");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,7 +7,7 @@ const morgan = require("morgan");
 var bodyParser = require("body-parser");
 
 const app = express();
-const port = 3000;
+const port = 5000;
 dotenv.config();
 
 mongoose
@@ -30,4 +30,4 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}/api/users`);
 });
 
-module.exports.handler = serverless(app);
+module.exports = app;
