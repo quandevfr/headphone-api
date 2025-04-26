@@ -24,6 +24,12 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 app.use(morgan("common"));
 
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "favicon.png"));
+});
+
 app.use("/api", userRoutes);
 
 app.listen(port, () => {
