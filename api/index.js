@@ -10,7 +10,7 @@ const users = [
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.get("/api/users", (req, res) => res.send(json(users)));
+app.get("/api/users", (req, res) => res.json(users));
 
 app.listen(3000, () => console.log("Server ready on port 3000."));
 
