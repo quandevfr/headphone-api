@@ -1,16 +1,38 @@
-const { json } = require("body-parser");
 const express = require("express");
 const app = express();
+const accountsRoutes = require("../routes/accountsRoutes");
+const orderRoutes = require("../routes/orderRoutes");
+require("dotenv").config();
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
 
-const users = [
-  { id: 1, name: "Nguyễn Văn A", phone: "0123456789" },
-  { id: 2, name: "Trần Thị B", phone: "0987654321" },
-  { id: 3, name: "Lê Văn C", phone: "0909090909" },
-];
+if (!process.env.MONGO_URI) {
+  console.error("❌ MONGO_URI is not defined in .env file");
+  process.exit(1);
+}
 
+console.log("MongoDB URI:", process.env.MONGO_URI);
+
+async function connectDB() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ Connected to MongoDB!");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1);
+  }
+}
+
+connectDB();
+
+app.use(express.json());
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.get("/api/users", (req, res) => res.json(users));
+app.use("/api", accountsRoutes);
+app.use("/api", orderRoutes);
 
 app.listen(3000, () => console.log("Server ready on port 3000."));
 
