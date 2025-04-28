@@ -1,16 +1,17 @@
-# node_modules - không cần đẩy lên Git vì đã có yarn.lock
+# Dependencies - no need to push to Git as we have yarn.lock
 node_modules/
+package-lock.json
 
-# log files
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# hệ điều hành
+# Operating System
 .DS_Store
 Thumbs.db
 
-# môi trường
+# Environment
 .env
 .env.local
 .env.*.local
@@ -18,14 +19,15 @@ Thumbs.db
 # VSCode configs
 .vscode/
 
-# logs
+# Logs
 logs
 *.log
 
-# hệ thống
+# System
 .idea/
 *.swp
 
-# kết quả build (nếu có)
+# Build output
 dist/
 build/
+.vercel

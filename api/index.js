@@ -1,33 +1,42 @@
 const express = require("express");
-const userRoutes = require("./routes/userRoutes");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const morgan = require("morgan");
-var bodyParser = require("body-parser");
-
 const app = express();
-const port = 3000;
-dotenv.config();
+const accountsRoutes = require("../routes/accountsRoutes");
+const orderRoutes = require("../routes/orderRoutes");
+require("dotenv").config();
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
+if (!process.env.MONGO_URI) {
+  console.error("❌ MONGO_URI is not defined in .env file");
+  process.exit(1);
+}
+
+console.log("MongoDB URI:", process.env.MONGO_URI);
+
+async function connectDB() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ Connected to MongoDB!");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
     process.exit(1);
-  });
+  }
+}
 
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
-app.use(morgan("common"));
+connectDB();
 
-app.use("/api", userRoutes);
+app.use(express.json());
+app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}/api/users`);
+app.use("/api", accountsRoutes);
+app.use("/api", orderRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports.handler = serverless(app);
+module.exports = app;
