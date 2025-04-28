@@ -6,11 +6,11 @@ const {
   login,
   logout,
 } = require("../controllers/accountController");
+const verifyToken = require("../middleware/auth");
 
-router.get("/accounts", getAccounts);
-// router.post("/accounts/test", addTestAccounts); // Endpoint to add test data
-router.post("/accounts/register", register);
-router.post("/accounts/login", login);
-router.post("/accounts/logout", logout);
+router.get("/accounts", verifyToken, getAccounts);
+router.post("/register", register);
+router.post("/login", login);
+router.post("/logout", logout);
 
 module.exports = router;

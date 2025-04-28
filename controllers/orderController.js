@@ -1,74 +1,44 @@
 const Order = require("../models/Order");
+const {
+  HTTP_STATUS,
+  ERROR_CODES,
+  MESSAGES
+} = require('../constants');
+const { sendSuccess, sendError } = require('../utils/response');
 
 exports.createOrder = async (req, res) => {
-  console.log("[createOrder]");
   try {
     const { customerName, phoneNumber, address, orderDetails } = req.body;
 
-    if (
-      !customerName ||
-      !phoneNumber ||
-      !address ||
-      !orderDetails ||
-      !Array.isArray(orderDetails)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields or orderDetails is not an array",
-      });
+    if (!customerName || !phoneNumber || !address || !orderDetails) {
+      return sendError(
+        res,
+        ERROR_CODES.MISSING_REQUIRED_FIELDS,
+        MESSAGES.ERROR.REQUIRED_FIELDS
+      );
     }
 
-    if (orderDetails.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Order must contain at least one item",
-      });
-    }
-
-    for (const item of orderDetails) {
-      if (!item.color || !item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: "Each order item must have color and quantity",
-        });
-      }
-
-      if (!["white", "black"].includes(item.color)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid color. Must be 'white' or 'black'",
-        });
-      }
-
-      if (item.quantity < 1) {
-        return res.status(400).json({
-          success: false,
-          message: "Quantity must be at least 1",
-        });
-      }
-    }
-
-    const newOrder = new Order({
+    const newOrder = await Order.create({
       customerName,
       phoneNumber,
       address,
-      orderDetails,
+      orderDetails
     });
 
-    await newOrder.save();
-
-    res.status(201).json({
-      success: true,
-      message: "Order created successfully",
-      data: newOrder,
-    });
+    return sendSuccess(
+      res,
+      newOrder,
+      MESSAGES.SUCCESS.ORDER_CREATED,
+      HTTP_STATUS.CREATED
+    );
   } catch (err) {
-    console.error("Error creating order:", err);
-    res.status(500).json({
-      success: false,
-      message: "Error creating order",
-      error: err.message,
-    });
+    return sendError(
+      res,
+      ERROR_CODES.DATABASE_ERROR,
+      MESSAGES.ERROR.SERVER_ERROR,
+      HTTP_STATUS.INTERNAL_SERVER,
+      err.message
+    );
   }
 };
 
@@ -77,13 +47,7 @@ exports.updateOrderStatus = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    const validStatuses = [
-      "pending",
-      "confirmed",
-      "shipping",
-      "delivered",
-      "cancelled",
-    ];
+    const validStatuses = Object.values(ORDER_STATUS);
 
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
