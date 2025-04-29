@@ -1,10 +1,23 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const accountsRoutes = require("../routes/accountsRoutes");
 const orderRoutes = require("../routes/orderRoutes");
 require("dotenv").config();
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGINS || "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  maxAge: 86400 // 24 hours
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 if (!process.env.MONGO_URI) {
   console.error("❌ MONGO_URI is not defined in .env file");
